@@ -1,0 +1,94 @@
+import React from 'react'
+import Link from "next/link";
+import Image from "next/image";
+import Logo from '../../../public/dreamlandlogo.jpeg'
+
+const Footer = () => {
+    return (
+        <>
+            <footer className="border-t bg-white border-gray-100 text-black">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 text-sm">
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div>
+                            <div className="flex items-center gap-2">
+                                {/* <div className="h-7 w-7 bg-indigo-600 rounded-md" /> */}
+                                <Image src={Logo} alt="logo" className="h-[3.5rem] w-[9rem] rounded-sm" />
+                                {/* <span className="font-semibold">RealtyHub</span> */}
+                            </div>
+                            <p className="mt-3 text-gray-600">
+                                New projects, verified listings, and trusted agents across India.
+                            </p>
+                        </div>
+                        <div>
+                            <div className="font-semibold mb-2">Company</div>
+                            <ul className="space-y-1 text-gray-600">
+                                <li><Link href="/about" className="hover:text-indigo-600">About</Link></li>
+                                <li><Link href="/careers" className="hover:text-indigo-600">Careers</Link></li>
+                                <li><Link href="/contact" className="hover:text-indigo-600">Contact</Link></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div className="font-semibold mb-2">Explore</div>
+                            <ul className="space-y-1 text-gray-600">
+                                <li><Link href="/search?tab=new" className="hover:text-indigo-600">New Projects</Link></li>
+                                <li><Link href="/search?tab=buy" className="hover:text-indigo-600">Buy</Link></li>
+                                <li><Link href="/search?tab=rent" className="hover:text-indigo-600">Rent</Link></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div className="font-semibold mb-2">Legal</div>
+                            <ul className="space-y-1 text-gray-600">
+                                <li><Link href="/terms" className="hover:text-indigo-600">Terms & Conditions</Link></li>
+                                <li><Link href="/privacy" className="hover:text-indigo-600">Privacy</Link></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div className="mt-12 pt-8 border-t border-gray-100">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 border-b border-gray-100 pb-8">
+                            <div className="text-sm text-gray-600 md:col-span-1">
+                                <h3 className="font-semibold text-gray-900 mb-3 block">Corporate Office</h3>
+                                <p className="leading-relaxed">
+                                    TBD Address Line 1,<br />
+                                    TBD Address Line 2,<br />
+                                    TBD City, TBD Pincode
+                                </p>
+                            </div>
+                            <div className="text-sm text-gray-600 md:col-span-2">
+                                <h3 className="font-semibold text-gray-900 mb-3 block">Reach Out To Us</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <a href="tel:+910000000000" className="group flex flex-col p-4 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-indigo-100 hover:shadow-sm transition-all duration-200 text-left">
+                                        <span className="font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">TBD Name <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full ml-1 font-semibold">TBD Title</span></span>
+                                        <span className="mt-1 text-gray-500 flex items-center gap-1">
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                                            TBD Phone
+                                        </span>
+                                        <span className="mt-1 text-gray-500 flex items-center gap-1">
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                            TBD City
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4 text-sm text-gray-600">
+                            <div className="text-gray-500">© {new Date().getFullYear()} Dreamland Pvt Ltd. All rights reserved.</div>
+                            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                                <div className="flex items-center gap-2">
+                                    <span className="font-medium text-gray-900">GST:</span>
+                                    <span className="bg-gray-100 px-2 py-0.5 rounded text-gray-700">TBD</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="font-medium text-gray-900">RERA:</span>
+                                    <span className="bg-gray-100 px-2 py-0.5 rounded text-gray-700">TBD</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </>
+    )
+}
+
+export default Footer

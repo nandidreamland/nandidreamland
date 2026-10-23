@@ -1,0 +1,22 @@
+{
+  "name": "Dreamland - Premium Property Solutions",
+  "short_name": "Dreamland",
+  "description": "Discover premium properties, new projects, and verified listings with Dreamland. Your trusted partner for buying, selling, and renting properties across India.",
+  "icons": [
+    {
+      "src": "/dreamlandlogo.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/dreamlandlogo.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ],
+  "theme_color": "#1F6B4C",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/"
+}
