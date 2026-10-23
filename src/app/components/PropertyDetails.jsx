@@ -584,7 +584,7 @@ export default function PropertyDetails({ initialData = null }) {
         { label: "Overview", id: "overview" },
         { label: "Amenities", id: "amenities" },
         { label: "About Project", id: "about-project" },
-        { label: "Location Map", id: "location-map" },
+        // { label: "Location Map", id: "location-map" }, // Hidden
         { label: "EMI Calculator", id: "emi-calculator" },
         { label: "Ratings & Reviews", id: "ratings-reviews" },
         { label: "About Location", id: "about-location" },
@@ -1216,23 +1216,25 @@ export default function PropertyDetails({ initialData = null }) {
                         )}
                     </section>
 
-                    {/* Location Map Section */}
-                    <section id="location-map" className='mt-16 sm:mt-24 lg:mt-32'>
-                        <div className="flex items-center gap-3 mb-6">
-                            <svg className="w-8 h-8 text-[#1F6B4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <h1 className='text-2xl sm:text-3xl lg:text-[32px] text-[#303030] font-bold'>
-                                Property Location
-                            </h1>
-                        </div>
-                        <LocationMap
-                            location={property.location}
-                            propertyTitle={property.title}
-                            mapLocationLink={property.mapLocationLink}
-                        />
-                    </section>
+                    {/* Location Map Section - hidden, set to true to re-enable */}
+                    {false && (
+                        <section id="location-map" className='mt-16 sm:mt-24 lg:mt-32'>
+                            <div className="flex items-center gap-3 mb-6">
+                                <svg className="w-8 h-8 text-[#1F6B4C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <h1 className='text-2xl sm:text-3xl lg:text-[32px] text-[#303030] font-bold'>
+                                    Property Location
+                                </h1>
+                            </div>
+                            <LocationMap
+                                location={property.location}
+                                propertyTitle={property.title}
+                                mapLocationLink={property.mapLocationLink}
+                            />
+                        </section>
+                    )}
 
                     {/* EMI Calculator Section */}
                     <section id="emi-calculator" className='mt-16 sm:mt-24 lg:mt-32'>
