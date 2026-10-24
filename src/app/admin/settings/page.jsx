@@ -42,11 +42,13 @@ export default function AdminSettings() {
   // Homepage Slider state
   const [slides, setSlides] = useState([]);
   const [slidesLoading, setSlidesLoading] = useState(false);
-  const [slideForm, setSlideForm] = useState(EMPTY_SLIDE);
+  // drafts = the slides being added right now, one row per image
+  const [drafts, setDrafts] = useState([]);
   const [editingSlideId, setEditingSlideId] = useState(null);
-  const [slideImageUploading, setSlideImageUploading] = useState(false);
   const [slideError, setSlideError] = useState('');
+  const [slideNotice, setSlideNotice] = useState('');
   const [slideSaving, setSlideSaving] = useState(false);
+  const [slideProgress, setSlideProgress] = useState('');
 
   // Hero image state (single image next to the homepage headline)
   const [heroImageLoaded, setHeroImageLoaded] = useState(false);
@@ -221,79 +223,159 @@ export default function AdminSettings() {
     }
   };
 
+  const makeDraft = (extra = {}) => ({
+    key: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    ...EMPTY_SLIDE,
+    fileName: '',
+    uploading: false,
+    error: '',
+    ...extra,
+  });
+
+  const updateDraft = (key, patch) =>
+    setDrafts((prev) => prev.map((d) => (d.key === key ? { ...d, ...patch } : d)));
+
+  const removeDraft = (key) => setDrafts((prev) => prev.filter((d) => d.key !== key));
+
+  // Pick many images at once - each one becomes its own slide row
   const handleSlideImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    if (files.length === 0) return;
 
-    setSlideImageUploading(true);
     setSlideError('');
+    setSlideNotice('');
 
-    try {
-      const { url } = await uploadImage(file);
-      setSlideForm((prev) => ({ ...prev, image: url }));
-    } catch (error) {
-      setSlideError(error.message);
-    } finally {
-      setSlideImageUploading(false);
-      e.target.value = '';
+    // Editing one slide: swap the image on that row, keep the text already typed there
+    if (editingSlideId) {
+      const row = drafts[0];
+      if (!row) return;
+      updateDraft(row.key, { uploading: true, fileName: files[0].name, error: '' });
+      try {
+        const { url } = await uploadImage(files[0]);
+        updateDraft(row.key, { image: url, uploading: false });
+      } catch (error) {
+        updateDraft(row.key, { uploading: false, error: error.message });
+      }
+      return;
     }
+
+    const rows = files.map((file) => makeDraft({ uploading: true, fileName: file.name }));
+    setDrafts((prev) => [...prev, ...rows]);
+
+    await Promise.all(
+      files.map(async (file, i) => {
+        try {
+          const { url } = await uploadImage(file);
+          updateDraft(rows[i].key, { image: url, uploading: false, error: '' });
+        } catch (error) {
+          updateDraft(rows[i].key, { uploading: false, error: error.message });
+        }
+      })
+    );
   };
 
   const handleSlideEdit = (slide) => {
     setEditingSlideId(slide._id);
-    setSlideForm({
-      image: slide.image || '',
-      title: slide.title || '',
-      subtitle: slide.subtitle || '',
-      link: slide.link || '',
-      alt: slide.alt || '',
-    });
+    setDrafts([
+      makeDraft({
+        image: slide.image || '',
+        title: slide.title || '',
+        subtitle: slide.subtitle || '',
+        link: slide.link || '',
+        alt: slide.alt || '',
+      }),
+    ]);
     setSlideError('');
+    setSlideNotice('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSlideCancel = () => {
     setEditingSlideId(null);
-    setSlideForm(EMPTY_SLIDE);
+    setDrafts([]);
     setSlideError('');
+    setSlideNotice('');
+  };
+
+  const saveOneSlide = async (draft, token) => {
+    const url = editingSlideId ? `/api/banners/${editingSlideId}` : '/api/banners';
+    const response = await fetch(url, {
+      method: editingSlideId ? 'PUT' : 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        image: draft.image,
+        title: draft.title,
+        subtitle: draft.subtitle,
+        link: draft.link,
+        alt: draft.alt,
+      }),
+    });
+    const data = await response.json();
+    if (!data.success) throw new Error(data.message || 'This slide could not be saved.');
   };
 
   const handleSlideSubmit = async (e) => {
     e.preventDefault();
-    if (!slideForm.image) {
-      setSlideError('An image is required for the slide');
+
+    const ready = drafts.filter((d) => d.image && !d.uploading);
+    if (ready.length === 0) {
+      setSlideError(
+        drafts.some((d) => d.uploading)
+          ? 'Images are still uploading. Please wait a moment and try again.'
+          : 'Add at least one image before saving.'
+      );
       return;
     }
 
     setSlideSaving(true);
     setSlideError('');
+    setSlideNotice('');
 
-    try {
-      const token = localStorage.getItem('token');
-      const url = editingSlideId ? `/api/banners/${editingSlideId}` : '/api/banners';
-      const method = editingSlideId ? 'PUT' : 'POST';
+    const token = localStorage.getItem('token');
+    const failed = [];
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(slideForm),
-      });
-      const data = await response.json();
-
-      if (data.success) {
-        await fetchSlides();
-        handleSlideCancel();
-        usePropertyStore.getState().invalidateBanners();
-      } else {
-        setSlideError(data.message || 'Failed to save slide');
+    for (let i = 0; i < ready.length; i++) {
+      setSlideProgress(`Saving slide ${i + 1} of ${ready.length}...`);
+      try {
+        await saveOneSlide(ready[i], token);
+      } catch (error) {
+        console.error('Error saving slide:', error);
+        failed.push({
+          ...ready[i],
+          error: error instanceof TypeError
+            ? 'Could not reach the server. Please check your internet connection.'
+            : error.message,
+        });
       }
-    } catch (error) {
-      setSlideError('Failed to save slide');
-      console.error('Error saving slide:', error);
-    } finally {
-      setSlideSaving(false);
+    }
+
+    setSlideProgress('');
+    setSlideSaving(false);
+    await fetchSlides();
+    usePropertyStore.getState().invalidateBanners();
+
+    const saved = ready.length - failed.length;
+    // keep anything that failed to upload or failed to save so nothing is silently lost
+    const unfinished = drafts.filter((d) => d.uploading || !d.image);
+    setDrafts([...unfinished, ...failed]);
+
+    if (failed.length === 0) {
+      setEditingSlideId(null);
+      setSlideNotice(
+        editingSlideId
+          ? 'Slide updated successfully.'
+          : `${saved} slide${saved === 1 ? '' : 's'} added to the homepage slider.`
+      );
+    } else {
+      setSlideError(
+        saved > 0
+          ? `${saved} slide${saved === 1 ? '' : 's'} saved. ${failed.length} could not be saved - see the message on each one below.`
+          : 'Nothing could be saved. See the message on each slide below.'
+      );
     }
   };
 
@@ -592,110 +674,194 @@ export default function AdminSettings() {
       {activeTab === 'slider' && (
         <div className="space-y-6">
           <form onSubmit={handleSlideSubmit} className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-5">
-            <div className="border-b border-slate-100 pb-4 flex items-center justify-between">
+            <div className="border-b border-slate-100 pb-4 flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-base font-bold text-slate-900">
-                  {editingSlideId ? 'Edit Slide' : 'Add New Slide'}
+                  {editingSlideId ? 'Edit Slide' : 'Add Slides'}
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Image, headline and sub-text shown in the homepage hero slider. Add as many slides as you like.
+                  {editingSlideId
+                    ? 'Change the image or text for this slide, then save.'
+                    : 'Choose several images at once - each one becomes a slide you can give its own title and sub-text before saving them all together.'}
                 </p>
               </div>
-              {editingSlideId && (
+              {(editingSlideId || drafts.length > 0) && (
                 <button
                   type="button"
                   onClick={handleSlideCancel}
-                  className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
+                  className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors shrink-0"
                 >
                   <X className="w-3.5 h-3.5" />
-                  <span>Cancel</span>
+                  <span>{editingSlideId ? 'Cancel' : 'Clear all'}</span>
                 </button>
               )}
             </div>
 
             {slideError && (
-              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0" />
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-px" />
                 <span>{slideError}</span>
               </div>
             )}
 
-            <div>
-              <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">
-                Slide Image *
+            {slideNotice && (
+              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>{slideNotice}</span>
+              </div>
+            )}
+
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 cursor-pointer">
+                <Upload className="w-3.5 h-3.5" />
+                {editingSlideId ? 'Replace Image' : 'Upload Images'}
+                <input
+                  type="file"
+                  onChange={handleSlideImageUpload}
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple={!editingSlideId}
+                  className="hidden"
+                  disabled={slideSaving}
+                />
               </label>
-              <div className="flex items-center gap-3">
-                <label className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 cursor-pointer">
-                  <Upload className="w-3.5 h-3.5" />
-                  {slideImageUploading ? 'Uploading...' : 'Upload Image'}
-                  <input type="file" onChange={handleSlideImageUpload} accept="image/*" className="hidden" disabled={slideImageUploading} />
-                </label>
-                <input
-                  type="text"
-                  value={slideForm.image}
-                  onChange={(e) => setSlideForm((prev) => ({ ...prev, image: e.target.value }))}
-                  placeholder="or paste a direct image URL"
-                  className="flex-1 px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-900 text-xs outline-none focus:border-[#1F6B4C] focus:bg-white"
-                />
-              </div>
-              {slideForm.image && (
-                <div className="mt-3 relative rounded-2xl overflow-hidden border border-slate-200 h-40 bg-slate-950">
-                  <img src={slideForm.image} alt="Slide preview" className="w-full h-full object-cover" />
-                </div>
+              {!editingSlideId && (
+                <button
+                  type="button"
+                  onClick={() => setDrafts((prev) => [...prev, makeDraft()])}
+                  disabled={slideSaving}
+                  className="px-4 py-2.5 border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 disabled:opacity-50"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  Add by URL
+                </button>
               )}
+              <p className="text-[11px] text-slate-500">JPG, PNG or WebP, up to 4MB each.</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-              <div>
-                <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Title</label>
-                <input
-                  type="text"
-                  value={slideForm.title}
-                  onChange={(e) => setSlideForm((prev) => ({ ...prev, title: e.target.value }))}
-                  placeholder="Luxury Apartments Available"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-900 outline-none focus:border-[#1F6B4C] focus:bg-white"
-                />
+            {drafts.length === 0 ? (
+              <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/60 py-10 text-center">
+                <ImageIcon className="w-7 h-7 text-slate-300 mx-auto mb-2" />
+                <p className="text-xs font-bold text-slate-600">No slides queued yet</p>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  Hit &quot;Upload Images&quot; and select as many photos as you want - hold Shift or Cmd to pick several.
+                </p>
               </div>
-              <div>
-                <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Subtitle</label>
-                <input
-                  type="text"
-                  value={slideForm.subtitle}
-                  onChange={(e) => setSlideForm((prev) => ({ ...prev, subtitle: e.target.value }))}
-                  placeholder="Starting from ₹85L - Limited Time Offer"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-900 outline-none focus:border-[#1F6B4C] focus:bg-white"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Link (optional)</label>
-                <input
-                  type="text"
-                  value={slideForm.link}
-                  onChange={(e) => setSlideForm((prev) => ({ ...prev, link: e.target.value }))}
-                  placeholder="/search?q=luxury+apartments"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-900 outline-none focus:border-[#1F6B4C] focus:bg-white"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Alt Text (optional)</label>
-                <input
-                  type="text"
-                  value={slideForm.alt}
-                  onChange={(e) => setSlideForm((prev) => ({ ...prev, alt: e.target.value }))}
-                  placeholder="Luxury apartment complex"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-900 outline-none focus:border-[#1F6B4C] focus:bg-white"
-                />
-              </div>
-            </div>
+            ) : (
+              <div className="space-y-4">
+                {drafts.map((draft, index) => (
+                  <div
+                    key={draft.key}
+                    className={`rounded-2xl border p-4 space-y-4 ${
+                      draft.error ? 'border-rose-200 bg-rose-50/40' : 'border-slate-200 bg-slate-50/60'
+                    }`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-28 h-20 rounded-xl overflow-hidden bg-slate-200 shrink-0 flex items-center justify-center">
+                        {draft.uploading ? (
+                          <span className="text-[10px] font-bold text-slate-500 uppercase">Uploading</span>
+                        ) : draft.image ? (
+                          <img src={draft.image} alt={draft.alt || 'Slide preview'} className="w-full h-full object-cover" />
+                        ) : (
+                          <ImageIcon className="w-5 h-5 text-slate-400" />
+                        )}
+                      </div>
 
-            <div className="flex justify-end pt-2">
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                            Slide {index + 1}
+                            {draft.fileName && <span className="normal-case tracking-normal text-slate-400 font-semibold"> &middot; {draft.fileName}</span>}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => removeDraft(draft.key)}
+                            disabled={slideSaving}
+                            className="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-white transition-colors disabled:opacity-50"
+                            aria-label={`Remove slide ${index + 1}`}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          value={draft.image}
+                          onChange={(e) => updateDraft(draft.key, { image: e.target.value, error: '' })}
+                          placeholder="Image URL (filled in automatically after upload)"
+                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-semibold text-slate-900 text-xs outline-none focus:border-[#1F6B4C]"
+                        />
+                        {draft.error && (
+                          <p className="text-[11px] font-semibold text-rose-700 flex items-start gap-1.5">
+                            <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-px" />
+                            <span>{draft.error}</span>
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Title</label>
+                        <input
+                          type="text"
+                          value={draft.title}
+                          onChange={(e) => updateDraft(draft.key, { title: e.target.value })}
+                          placeholder="Luxury Apartments Available"
+                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-semibold text-slate-900 outline-none focus:border-[#1F6B4C]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Subtitle</label>
+                        <input
+                          type="text"
+                          value={draft.subtitle}
+                          onChange={(e) => updateDraft(draft.key, { subtitle: e.target.value })}
+                          placeholder="Starting from ₹85L - Limited Time Offer"
+                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-semibold text-slate-900 outline-none focus:border-[#1F6B4C]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Link (optional)</label>
+                        <input
+                          type="text"
+                          value={draft.link}
+                          onChange={(e) => updateDraft(draft.key, { link: e.target.value })}
+                          placeholder="/search?q=luxury+apartments"
+                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-semibold text-slate-900 outline-none focus:border-[#1F6B4C]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Alt Text (optional)</label>
+                        <input
+                          type="text"
+                          value={draft.alt}
+                          onChange={(e) => updateDraft(draft.key, { alt: e.target.value })}
+                          placeholder="Luxury apartment complex"
+                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-semibold text-slate-900 outline-none focus:border-[#1F6B4C]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              {slideProgress && <p className="text-[11px] font-semibold text-slate-500">{slideProgress}</p>}
               <button
                 type="submit"
-                disabled={slideSaving || slideImageUploading}
+                disabled={slideSaving || drafts.length === 0 || drafts.some((d) => d.uploading)}
                 className="inline-flex items-center space-x-1.5 px-5 py-2.5 bg-[#1F6B4C] hover:bg-[#18593F] text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-50"
               >
                 <Plus className="w-4 h-4" />
-                <span>{slideSaving ? 'Saving...' : editingSlideId ? 'Update Slide' : 'Add Slide'}</span>
+                <span>
+                  {slideSaving
+                    ? 'Saving...'
+                    : editingSlideId
+                      ? 'Update Slide'
+                      : drafts.length === 0
+                        ? 'Add Slides'
+                        : `Add ${drafts.length} Slide${drafts.length === 1 ? '' : 's'}`}
+                </span>
               </button>
             </div>
           </form>
