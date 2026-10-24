@@ -14,7 +14,7 @@ const MobileStickyCTA = () => {
                 Call Now
             </a>
             <a 
-                href="https://wa.me/91XXXXXXXXXX?text=Hi, I am interested in properties on Dreamland." 
+                href="https://wa.me/91XXXXXXXXXX?text=Hi, I am interested in properties on Nandi Dreamland." 
                 className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] text-white py-3 rounded-lg font-bold text-sm active:bg-[#128C7E] transition-colors"
             >
                 <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">

@@ -362,7 +362,7 @@ export default function AdminBlogsPage() {
                         })}
                       </div>
                       <div className="text-[11px] text-slate-500">
-                        by {blog.author?.name || 'Dreamland Editorial'}
+                        by {blog.author?.name || 'Nandi Dreamland Editorial'}
                       </div>
                     </td>
 

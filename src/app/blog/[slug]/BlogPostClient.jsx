@@ -136,11 +136,11 @@ export default function BlogPostClient({ initialData = null }) {
       "image": blogData.featuredImage,
       "author": {
         "@type": "Person",
-        "name": blogData.author?.name || "Dreamland Team"
+        "name": blogData.author?.name || "Nandi Dreamland Team"
       },
       "publisher": {
         "@type": "Organization",
-        "name": "Dreamland",
+        "name": "Nandi Dreamland",
         "logo": {
           "@type": "ImageObject",
           "url": "/dreamlandlogo.jpeg"
@@ -268,7 +268,7 @@ export default function BlogPostClient({ initialData = null }) {
                 </div>
                 <div>
                   <div className="font-medium text-gray-900">
-                    {blog.author?.name || 'Dreamland Team'}
+                    {blog.author?.name || 'Nandi Dreamland Team'}
                   </div>
                   <div className="text-sm text-gray-600">
                     {formatDate(blog.publishedAt || blog.createdAt)} • {blog.readingTime} min read
@@ -329,7 +329,7 @@ export default function BlogPostClient({ initialData = null }) {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {blog.author?.name || 'Dreamland Team'}
+                  {blog.author?.name || 'Nandi Dreamland Team'}
                 </h3>
                 <p className="text-gray-600">
                   Expert real estate professionals helping you make informed property decisions. 

@@ -19,6 +19,10 @@ export const usePropertyStore = create((set, get) => ({
   bannersLoading: false,
   bannersLastFetched: null,
 
+  heroImage: null,
+  heroImageLoading: false,
+  heroImageLastFetched: null,
+
   // Set properties from SSR or initial payload
   setProperties: (initialProperties) => {
     if (Array.isArray(initialProperties) && initialProperties.length > 0) {
@@ -130,44 +134,57 @@ export const usePropertyStore = create((set, get) => ({
     set({ bannersLoading: true });
 
     try {
-      const sampleBanners = [
-        {
-          id: 1,
-          image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&h=400&fit=crop&crop=center",
-          title: "Luxury Apartments Available",
-          subtitle: "Starting from ₹85L - Limited Time Offer",
-          alt: "Luxury apartment complex",
-          link: "/search?q=luxury+apartments"
-        },
-        {
-          id: 2,
-          image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&h=400&fit=crop&crop=center",
-          title: "Premium Villas - Early Bird Offer",
-          subtitle: "Save up to 15% on booking",
-          alt: "Modern villa exterior",
-          link: "/search?type=house"
-        },
-        {
-          id: 3,
-          image: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1200&h=400&fit=crop&crop=center",
-          title: "Ready to Move Properties",
-          subtitle: "Immediate possession available",
-          alt: "Ready to move apartment",
-          link: "/search?q=ready+to+move"
-        }
-      ];
+      const response = await fetch('/api/banners');
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to load banners');
+      }
 
       set({
-        banners: sampleBanners,
+        banners: data.data,
         bannersLastFetched: Date.now(),
         bannersLoading: false,
       });
 
-      return sampleBanners;
+      return data.data;
     } catch (err) {
       console.error('Error fetching banners:', err);
       set({ bannersLoading: false });
       return banners;
+    }
+  },
+
+  // Fetch hero image with caching
+  fetchHeroImage: async ({ force = false } = {}) => {
+    const { heroImage, heroImageLastFetched } = get();
+    const isFresh = heroImageLastFetched && (Date.now() - heroImageLastFetched < BANNER_CACHE_TTL);
+
+    if (!force && isFresh && heroImage) {
+      return heroImage;
+    }
+
+    set({ heroImageLoading: true });
+
+    try {
+      const response = await fetch('/api/hero-image');
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to load hero image');
+      }
+
+      set({
+        heroImage: data.data,
+        heroImageLastFetched: Date.now(),
+        heroImageLoading: false,
+      });
+
+      return data.data;
+    } catch (err) {
+      console.error('Error fetching hero image:', err);
+      set({ heroImageLoading: false });
+      return heroImage;
     }
   },
 
@@ -178,6 +195,14 @@ export const usePropertyStore = create((set, get) => ({
 
   invalidateAdminProperties: () => {
     set({ adminLastFetched: null });
+  },
+
+  invalidateBanners: () => {
+    set({ bannersLastFetched: null });
+  },
+
+  invalidateHeroImage: () => {
+    set({ heroImageLastFetched: null });
   },
 
   // In-place optimistic updates across both admin and public property collections

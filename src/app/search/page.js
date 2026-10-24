@@ -19,13 +19,13 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata = {
-  title: "Search Properties in Bangalore — Buy, Rent & New Projects | Dreamland",
-  description: "Search verified properties in Bangalore. Filter by location, price, BHK, type — apartments, villas, plots, new projects. Find your dream home with Dreamland.",
+  title: "Search Properties in Bangalore — Buy, Rent & New Projects | Nandi Dreamland",
+  description: "Search verified properties in Bangalore. Filter by location, price, BHK, type — apartments, villas, plots, new projects. Find your dream home with Nandi Dreamland.",
   alternates: {
     canonical: "https://www.dreamland.com/search",
   },
   openGraph: {
-    title: "Search Properties in Bangalore — Dreamland",
+    title: "Search Properties in Bangalore — Nandi Dreamland",
     description: "Browse 5,000+ verified properties. Filter by apartments, villas, plots, new projects across Bangalore.",
     url: "https://www.dreamland.com/search",
     type: "website",

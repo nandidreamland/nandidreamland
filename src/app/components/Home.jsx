@@ -27,8 +27,8 @@ const jakarta = Plus_Jakarta_Sans({
     display: "swap",
 });
 
-const TOP_CITIES = ["Bangalore", "Mumbai", "Pune", "Hyderabad", "Chennai", "Delhi NCR"];
-const POPULAR_LOCALITIES = [
+const DEFAULT_TOP_CITIES = ["Bangalore", "Mumbai", "Pune", "Hyderabad", "Chennai", "Delhi NCR"];
+const DEFAULT_POPULAR_LOCALITIES = [
     "Whitefield, Bengaluru",
     "Baner, Pune",
     "Andheri, Mumbai",
@@ -50,13 +50,17 @@ export default function Home({ initialProperties = null }) {
     const storeProperties = usePropertyStore((state) => state.properties);
     const storeLoading = usePropertyStore((state) => state.loading);
     const storeBanners = usePropertyStore((state) => state.banners);
+    const storeHeroImage = usePropertyStore((state) => state.heroImage);
     const fetchProperties = usePropertyStore((state) => state.fetchProperties);
     const fetchBanners = usePropertyStore((state) => state.fetchBanners);
+    const fetchHeroImage = usePropertyStore((state) => state.fetchHeroImage);
     const setProperties = usePropertyStore((state) => state.setProperties);
 
     const properties = storeProperties.length > 0 ? storeProperties : (initialProperties || []);
     const loading = storeLoading && properties.length === 0;
     const banners = storeBanners.length > 0 ? storeBanners : [];
+    const topCities = storeHeroImage?.topCities?.length > 0 ? storeHeroImage.topCities : DEFAULT_TOP_CITIES;
+    const popularLocalities = storeHeroImage?.popularLocalities?.length > 0 ? storeHeroImage.popularLocalities : DEFAULT_POPULAR_LOCALITIES;
 
     useEffect(() => {
         // Check if user has already submitted lead information
@@ -80,10 +84,11 @@ export default function Home({ initialProperties = null }) {
             fetchProperties();
         }
 
-        if (storeBanners.length === 0) {
-            fetchBanners();
-        }
-    }, [initialProperties, storeProperties.length, storeBanners.length, setProperties, fetchProperties, fetchBanners]);
+        // fetchBanners/fetchHeroImage check their own cache freshness internally,
+        // so calling them on every mount picks up admin edits without extra network cost.
+        fetchBanners();
+        fetchHeroImage();
+    }, [initialProperties, storeProperties.length, setProperties, fetchProperties, fetchBanners, fetchHeroImage]);
 
     const handleLeadSubmit = async (leadData) => {
         try {
@@ -153,7 +158,7 @@ export default function Home({ initialProperties = null }) {
                                 A home search built on what&apos;s actually true about the property.
                             </h1>
                             <p className="mt-5 text-base sm:text-lg text-[#15241D]/70 max-w-md">
-                                Every listing on Dreamland is site-verified before it goes live, and every builder deal comes direct — no brokerage layered on top.
+                                Every listing on Nandi Dreamland is site-verified before it goes live, and every builder deal comes direct — no brokerage layered on top.
                             </p>
 
                             {/* Search card */}
@@ -247,16 +252,16 @@ export default function Home({ initialProperties = null }) {
                         <div className="relative hidden lg:block">
                             <div className="aspect-[4/5] rounded-2xl overflow-hidden">
                                 <img
-                                    src="https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=900&h=1125&fit=crop&crop=center"
-                                    alt="Bangalore skyline, one of the cities Dreamland lists properties in"
+                                    src={storeHeroImage?.image || "https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=900&h=1125&fit=crop&crop=center"}
+                                    alt={storeHeroImage?.alt || "Bangalore skyline, one of the cities Nandi Dreamland lists properties in"}
                                     className="w-full h-full object-cover"
                                     loading="eager"
                                 />
                             </div>
                             <div className="absolute -bottom-6 -left-8 right-10 bg-[#15241D] text-[#F7F4EC] rounded-2xl px-6 py-5">
-                                <p className="text-sm text-[#F7F4EC]/70">Across six cities, right now</p>
+                                <p className="text-sm text-[#F7F4EC]/70">{storeHeroImage?.statLabel || 'Across six cities, right now'}</p>
                                 <p className="mt-1 text-2xl" style={{ fontFamily: 'var(--font-fraunces)' }}>
-                                    {properties.length > 0 ? `${properties.length}+ open listings` : 'New listings added weekly'}
+                                    {storeHeroImage?.statValue || 'New listings added weekly'}
                                 </p>
                             </div>
                         </div>
@@ -274,7 +279,7 @@ export default function Home({ initialProperties = null }) {
                     <div>
                         <span className="text-sm text-[#15241D]/50">Top cities</span>
                         <div className="mt-3 flex flex-wrap gap-2">
-                            {TOP_CITIES.map((city) => (
+                            {topCities.map((city) => (
                                 <Link
                                     key={city}
                                     href={`/search?tab=buy&q=${encodeURIComponent(city)}`}
@@ -288,7 +293,7 @@ export default function Home({ initialProperties = null }) {
                     <div>
                         <span className="text-sm text-[#15241D]/50">Popular localities</span>
                         <div className="mt-3 flex flex-wrap gap-2">
-                            {POPULAR_LOCALITIES.map((loc) => (
+                            {popularLocalities.map((loc) => (
                                 <Link
                                     key={loc}
                                     href={`/search?tab=buy&q=${encodeURIComponent(loc)}`}

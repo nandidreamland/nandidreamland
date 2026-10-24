@@ -12,7 +12,7 @@ const Footer = () => {
                         <div>
                             <div className="flex items-center gap-2">
                                 {/* <div className="h-7 w-7 bg-indigo-600 rounded-md" /> */}
-                                <Image src={Logo} alt="logo" className="h-[3.5rem] w-[9rem] rounded-sm" />
+                                <Image src={Logo} alt="Nandi Dreamland logo" width={56} height={56} className="h-14 w-14 rounded-md object-contain" />
                                 {/* <span className="font-semibold">RealtyHub</span> */}
                             </div>
                             <p className="mt-3 text-gray-600">
@@ -72,7 +72,17 @@ const Footer = () => {
                         </div>
 
                         <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4 text-sm text-gray-600">
-                            <div className="text-gray-500">© {new Date().getFullYear()} Dreamland Pvt Ltd. All rights reserved.</div>
+                            <div className="text-gray-500">
+                                © {new Date().getFullYear()} Nandi Dreamland Pvt Ltd. All rights reserved. · Developed by{' '}
+                                <a
+                                    href="https://digistrivemedia.com/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="font-medium text-gray-900 hover:text-indigo-600 transition-colors"
+                                >
+                                    DigistriveMedia
+                                </a>
+                            </div>
                             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                                 <div className="flex items-center gap-2">
                                     <span className="font-medium text-gray-900">GST:</span>

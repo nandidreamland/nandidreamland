@@ -62,7 +62,7 @@ const Navber = () => {
                         <div className="flex items-center">
                             <Image
                                 src={Logo}
-                                alt="Dreamland Logo"
+                                alt="Nandi Dreamland Logo"
                                 className="h-11 w-auto rounded-md"
                             />
                         </div>
@@ -184,7 +184,7 @@ const Navber = () => {
                             <div className="flex items-center">
                                 <Image
                                     src={Logo}
-                                    alt="Dreamland Logo"
+                                    alt="Nandi Dreamland Logo"
                                     className="h-10 w-auto rounded-md"
                                 />
                             </div>

@@ -7,7 +7,7 @@ const ChatBot = () => {
     const [messages, setMessages] = useState([
         {
             id: 1,
-            text: "Hi! I'm your Dreamland assistant. How can I help you find your perfect property today?",
+            text: "Hi! I'm your Nandi Dreamland assistant. How can I help you find your perfect property today?",
             sender: 'bot',
             timestamp: new Date()
         }
@@ -122,7 +122,7 @@ const ChatBot = () => {
                                 </svg>
                             </div>
                             <div>
-                                <h3 className="font-semibold">Dreamland Assistant</h3>
+                                <h3 className="font-semibold">Nandi Dreamland Assistant</h3>
                                 <p className="text-xs opacity-90">Online now</p>
                             </div>
                         </div>

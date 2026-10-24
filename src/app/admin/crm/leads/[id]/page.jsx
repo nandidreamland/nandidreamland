@@ -705,7 +705,7 @@ export default function LeadDetailPage() {
                   <span>Call Now</span>
                 </a>
                 <a
-                  href={`https://wa.me/91${lead.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hello ${lead.name}, I am reaching out from Dreamland regarding your property interest in ${getLocationDisplayName(lead.interestedLocation)}.`)}`}
+                  href={`https://wa.me/91${lead.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hello ${lead.name}, I am reaching out from Nandi Dreamland regarding your property interest in ${getLocationDisplayName(lead.interestedLocation)}.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-colors"

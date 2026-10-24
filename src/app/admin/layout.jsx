@@ -146,7 +146,7 @@ export default function AdminLayout({ children }) {
               D
             </div>
             <div>
-              <h2 className="text-sm font-bold tracking-tight text-white">DREAMLAND</h2>
+              <h2 className="text-sm font-bold tracking-tight text-white">NANDI DREAMLAND</h2>
               <p className="text-[10px] uppercase tracking-widest text-[#1F6B4C] font-semibold">CRM Suite</p>
             </div>
           </div>
@@ -300,7 +300,7 @@ function SidebarContent({
             </div>
             <div className="overflow-hidden">
               <div className="flex items-center gap-1.5">
-                <h1 className="text-sm font-black tracking-wider text-white">DREAMLAND</h1>
+                <h1 className="text-sm font-black tracking-wider text-white">NANDI DREAMLAND</h1>
                 <ShieldCheck className="w-3.5 h-3.5 text-[#1F6B4C]" />
               </div>
               <p className="text-[10px] font-semibold tracking-widest text-slate-400 uppercase">

@@ -14,9 +14,9 @@ const CHATBOT_CONFIG = {
 };
 
 /**
- * Chatbot System Prompt - Teaches AI about Dreamland chatbot behavior
+ * Chatbot System Prompt - Teaches AI about Nandi Dreamland chatbot behavior
  */
-const CHATBOT_SYSTEM_PROMPT = `You are Dreamland's intelligent property assistant chatbot. Your role is to help users find properties and answer real estate questions in a friendly, conversational manner.
+const CHATBOT_SYSTEM_PROMPT = `You are Nandi Dreamland's intelligent property assistant chatbot. Your role is to help users find properties and answer real estate questions in a friendly, conversational manner.
 
 **Your Personality:**
 - Friendly, helpful, and professional
@@ -28,7 +28,7 @@ const CHATBOT_SYSTEM_PROMPT = `You are Dreamland's intelligent property assistan
 1. **Property Search**: Help users find properties based on their requirements
 2. **General Assistance**: Answer questions about buying, renting, locations, pricing
 3. **Guidance**: Provide advice on property selection and real estate process
-4. **Information**: Share details about Dreamland services
+4. **Information**: Share details about Nandi Dreamland services
 
 **Key Bangalore Locations You Know:**
 - Whitefield (IT hub, tech professionals)
@@ -253,7 +253,7 @@ Respond in a friendly, conversational way. If recommending properties, include p
 export async function GET() {
   return NextResponse.json({
     success: true,
-    info: 'Dreamland Chatbot API',
+    info: 'Nandi Dreamland Chatbot API',
     model: CHATBOT_CONFIG.model,
     version: '2.0.0',
     powered_by: 'Google Gemini AI'

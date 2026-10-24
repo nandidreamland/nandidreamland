@@ -18,16 +18,16 @@ export async function generateMetadata({ params }) {
   const property = await getProperty(params.id);
 
   if (!property || property.status !== 'approved') {
-    return { title: 'Property Not Found | Dreamland' };
+    return { title: 'Property Not Found | Nandi Dreamland' };
   }
 
   const bhkStr = property.bhk ? `${property.bhk.toUpperCase()} ` : '';
   const typeStr = property.type ? property.type.replace(/-/g, ' ') : 'Property';
-  const title = `${property.title} - ${bhkStr}${typeStr} in ${property.location} | Dreamland`;
+  const title = `${property.title} - ${bhkStr}${typeStr} in ${property.location} | Nandi Dreamland`;
 
   const description = property.description
     ? property.description.replace(/<[^>]*>/g, '').substring(0, 160)
-    : `${bhkStr}${typeStr} in ${property.location} at ${property.price}. Explore premium real estate listings at Dreamland.`;
+    : `${bhkStr}${typeStr} in ${property.location} at ${property.price}. Explore premium real estate listings at Nandi Dreamland.`;
 
   const image = property.gallery?.[0] || null;
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.dreamland.com';
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }) {
       description,
       url,
       type: 'website',
-      siteName: 'Dreamland',
+      siteName: 'Nandi Dreamland',
       ...(image && { images: [{ url: image, width: 1200, height: 630, alt: property.title }] }),
     },
     twitter: {

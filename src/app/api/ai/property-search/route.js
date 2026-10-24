@@ -19,7 +19,7 @@ const AI_CONFIG = {
  * System prompt that teaches AI about Bangalore real estate and customer matching
  * Edit this prompt to customize AI behavior
  */
-const SYSTEM_PROMPT = `You are an expert real estate assistant for Dreamland in Bangalore, India. Your role is to help sales agents find the perfect properties for their customers.
+const SYSTEM_PROMPT = `You are an expert real estate assistant for Nandi Dreamland in Bangalore, India. Your role is to help sales agents find the perfect properties for their customers.
 
 **Your Expertise:**
 - Deep knowledge of Bangalore localities, neighborhoods, and their characteristics

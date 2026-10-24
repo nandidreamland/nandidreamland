@@ -1,8 +1,8 @@
 'use client';
 
 export default function FloatingContact() {
-  const phoneNumber = '910000000000'; // TBD: replace with Dreamland's WhatsApp/phone number
-  const whatsappMessage = encodeURIComponent('Hi, I am interested in a property listed on Dreamland. Can you help me?');
+  const phoneNumber = '910000000000'; // TBD: replace with Nandi Dreamland's WhatsApp/phone number
+  const whatsappMessage = encodeURIComponent('Hi, I am interested in a property listed on Nandi Dreamland. Can you help me?');
 
   return (
     <div className="fixed bottom-24 lg:bottom-6 right-4 lg:right-6 z-40 flex flex-col gap-3">

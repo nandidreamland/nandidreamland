@@ -114,7 +114,7 @@ export default function AdminDashboard() {
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-semibold tracking-wide text-white/90">
               <span className="w-2 h-2 rounded-full bg-[#1F6B4C] animate-pulse"></span>
-              <span>DREAMLAND • EXECUTIVE PLATFORM</span>
+              <span>NANDI DREAMLAND • EXECUTIVE PLATFORM</span>
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
               Real Estate Intelligence &amp; Sales CRM

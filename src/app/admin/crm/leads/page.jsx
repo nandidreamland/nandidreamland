@@ -1299,7 +1299,7 @@ export default function CRMLeadsPage() {
                             )}
                             {lead.phone && (
                               <a
-                                href={`https://wa.me/91${lead.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hello ${lead.name}, regarding your real estate inquiry with Dreamland...`)}`}
+                                href={`https://wa.me/91${lead.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Hello ${lead.name}, regarding your real estate inquiry with Nandi Dreamland...`)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="p-1 rounded-lg text-slate-400 hover:text-green-600 hover:bg-green-50 transition-colors"

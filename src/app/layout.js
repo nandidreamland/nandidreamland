@@ -17,12 +17,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Dreamland - Premium Property Solutions",
-  description: "Discover premium properties, new projects, and verified listings with Dreamland. Your trusted partner for buying, selling, and renting properties across India.",
-  keywords: "real estate, property, buy property, rent property, new projects, verified listings, Dreamland, premium properties, India",
-  authors: [{ name: "Dreamland" }],
-  creator: "Dreamland",
-  publisher: "Dreamland",
+  title: "Nandi Dreamland - Premium Property Solutions",
+  description: "Discover premium properties, new projects, and verified listings with Nandi Dreamland. Your trusted partner for buying, selling, and renting properties across India.",
+  keywords: "real estate, property, buy property, rent property, new projects, verified listings, Nandi Dreamland, premium properties, India",
+  authors: [{ name: "Nandi Dreamland" }],
+  creator: "Nandi Dreamland",
+  publisher: "Nandi Dreamland",
   formatDetection: {
     email: false,
     address: false,
@@ -36,10 +36,10 @@ export const metadata = {
     apple: "/dreamlandlogo.jpeg",
   },
   openGraph: {
-    title: "Dreamland - Premium Property Solutions | Built on Trust",
-    description: "Discover premium properties, new projects, and verified listings with Dreamland. Your trusted partner for buying, selling, and renting properties across India.",
+    title: "Nandi Dreamland - Premium Property Solutions | Built on Trust",
+    description: "Discover premium properties, new projects, and verified listings with Nandi Dreamland. Your trusted partner for buying, selling, and renting properties across India.",
     url: "https://dreamland.com",
-    siteName: "Dreamland",
+    siteName: "Nandi Dreamland",
     images: [
       {
         url: "/dreamlandlogo.jpeg",
@@ -47,7 +47,7 @@ export const metadata = {
 
         width: 1200,
         height: 600,
-        alt: "Dreamland - Built on Trust",
+        alt: "Nandi Dreamland - Built on Trust",
       },
     ],
     locale: "en_IN",
@@ -55,8 +55,8 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dreamland - Premium Property Solutions",
-    description: "Discover premium properties, new projects, and verified listings with Dreamland. Your trusted partner for buying, selling, and renting properties across India.",
+    title: "Nandi Dreamland - Premium Property Solutions",
+    description: "Discover premium properties, new projects, and verified listings with Nandi Dreamland. Your trusted partner for buying, selling, and renting properties across India.",
     images: ["/dreamlandlogo.jpeg"],
     // images: ["/dreamlandlogo.jpeg"],
 
@@ -132,7 +132,7 @@ export default function RootLayout({ children }) {
             style={{ display: 'none', visibility: 'hidden' }}
           ></iframe>
         </noscript>
-        {/* Organization + WebSite Structured Data — helps Google & AI assistants understand Dreamland */}
+        {/* Organization + WebSite Structured Data — helps Google & AI assistants understand Nandi Dreamland */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -142,7 +142,7 @@ export default function RootLayout({ children }) {
                 {
                   "@type": "RealEstateAgent",
                   "@id": "https://www.dreamland.com/#organization",
-                  "name": "Dreamland",
+                  "name": "Nandi Dreamland",
                   "alternateName": "Dreamland",
                   "url": "https://www.dreamland.com",
                   "logo": {
@@ -152,7 +152,7 @@ export default function RootLayout({ children }) {
                     "height": 60
                   },
                   "image": "https://www.dreamland.com/dreamlandlogo.jpeg",
-                  "description": "Dreamland is a premium real estate agency offering verified property listings, new residential projects, and expert guidance for buying, selling, and renting properties across India.",
+                  "description": "Nandi Dreamland is a premium real estate agency offering verified property listings, new residential projects, and expert guidance for buying, selling, and renting properties across India.",
                   "address": {
                     "@type": "PostalAddress",
                     "streetAddress": "TBD",
@@ -181,7 +181,7 @@ export default function RootLayout({ children }) {
                   "@type": "WebSite",
                   "@id": "https://www.dreamland.com/#website",
                   "url": "https://www.dreamland.com",
-                  "name": "Dreamland",
+                  "name": "Nandi Dreamland",
                   "description": "Premium Property Solutions — Buy, Sell & Rent Verified Properties in India",
                   "publisher": { "@id": "https://www.dreamland.com/#organization" },
                   "inLanguage": "en-IN",

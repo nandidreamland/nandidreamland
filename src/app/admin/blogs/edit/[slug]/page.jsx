@@ -449,7 +449,7 @@ export default function EditBlogPage() {
               </span>
               <p className="text-xs text-emerald-700 font-medium">https://dreamland.com › blog › {params.slug}</p>
               <h4 className="text-base font-bold text-blue-800 hover:underline cursor-pointer line-clamp-1">
-                {formData.seo.metaTitle || formData.title} | Dreamland
+                {formData.seo.metaTitle || formData.title} | Nandi Dreamland
               </h4>
               <p className="text-xs text-slate-600 line-clamp-2 mt-0.5">
                 {formData.seo.metaDescription || formData.excerpt || 'Article summary snippet for Google organic results.'}

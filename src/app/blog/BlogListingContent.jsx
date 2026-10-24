@@ -77,7 +77,7 @@ export default function BlogListingContent({ initialBlogs = null, initialTotalPa
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
             <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-              Dreamland Blog
+              Nandi Dreamland Blog
             </h1>
             <p className="text-xl text-white/90 max-w-2xl mx-auto">
               Expert insights, market trends, and valuable tips for your real estate journey
@@ -172,7 +172,7 @@ export default function BlogListingContent({ initialBlogs = null, initialTotalPa
                                 {blog.author?.name?.charAt(0) || 'A'}
                               </span>
                             </div>
-                            <span>{blog.author?.name || 'Dreamland Team'}</span>
+                            <span>{blog.author?.name || 'Nandi Dreamland Team'}</span>
                           </div>
                           <div className="text-right">
                             <div>{formatDate(blog.publishedAt || blog.createdAt)}</div>

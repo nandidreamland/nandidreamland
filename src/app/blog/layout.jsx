@@ -1,9 +1,9 @@
 export const metadata = {
   title: {
-    template: '%s | Dreamland Blog',
-    default: 'Dreamland Blog - Real Estate Insights & Property Investment Tips'
+    template: '%s | Nandi Dreamland Blog',
+    default: 'Nandi Dreamland Blog - Real Estate Insights & Property Investment Tips'
   },
-  description: 'Expert real estate insights, property investment tips, market trends, and buying guides from Dreamland. Stay informed with our comprehensive blog on real estate in Bangalore and beyond.',
+  description: 'Expert real estate insights, property investment tips, market trends, and buying guides from Nandi Dreamland. Stay informed with our comprehensive blog on real estate in Bangalore and beyond.',
   keywords: [
     'real estate blog',
     'property investment tips',
@@ -16,9 +16,9 @@ export const metadata = {
     'housing market',
     'real estate experts'
   ],
-  authors: [{ name: 'Dreamland Team' }],
-  creator: 'Dreamland',
-  publisher: 'Dreamland',
+  authors: [{ name: 'Nandi Dreamland Team' }],
+  creator: 'Nandi Dreamland',
+  publisher: 'Nandi Dreamland',
   formatDetection: {
     email: false,
     address: false,
@@ -29,16 +29,16 @@ export const metadata = {
     canonical: '/blog',
   },
   openGraph: {
-    title: 'Dreamland Blog - Real Estate Insights & Investment Tips',
-    description: 'Expert real estate insights, property investment tips, and market trends from Dreamland professionals.',
+    title: 'Nandi Dreamland Blog - Real Estate Insights & Investment Tips',
+    description: 'Expert real estate insights, property investment tips, and market trends from Nandi Dreamland professionals.',
     url: '/blog',
-    siteName: 'Dreamland',
+    siteName: 'Nandi Dreamland',
     images: [
       {
         url: '/dreamlandlogo.jpeg',
         width: 1200,
         height: 630,
-        alt: 'Dreamland Blog',
+        alt: 'Nandi Dreamland Blog',
       },
     ],
     locale: 'en_US',
@@ -46,8 +46,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Dreamland Blog - Real Estate Insights & Investment Tips',
-    description: 'Expert real estate insights, property investment tips, and market trends from Dreamland professionals.',
+    title: 'Nandi Dreamland Blog - Real Estate Insights & Investment Tips',
+    description: 'Expert real estate insights, property investment tips, and market trends from Nandi Dreamland professionals.',
     images: ['/dreamlandlogo.jpeg'],
   },
   robots: {
@@ -80,12 +80,12 @@ export default function BlogLayout({ children }) {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Blog",
-            "name": "Dreamland Blog",
-            "description": "Expert real estate insights, property investment tips, and market trends from Dreamland professionals.",
+            "name": "Nandi Dreamland Blog",
+            "description": "Expert real estate insights, property investment tips, and market trends from Nandi Dreamland professionals.",
             "url": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://dreamland.com'}/blog`,
             "publisher": {
               "@type": "Organization",
-              "name": "Dreamland",
+              "name": "Nandi Dreamland",
               "logo": {
                 "@type": "ImageObject",
                 "url": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://dreamland.com'}/dreamlandlogo.jpeg`

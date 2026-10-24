@@ -17,13 +17,13 @@ async function getInitialProperties() {
 }
 
 export const metadata = {
-  title: "Dreamland — Buy, Sell & Rent Verified Properties in Bangalore | Built on Trust",
-  description: "Discover 5,000+ verified properties in Bangalore with Dreamland. Browse apartments, villas, plots & new projects from top builders. Expert guidance for buying, selling & renting. RERA registered.",
+  title: "Nandi Dreamland — Buy, Sell & Rent Verified Properties in Bangalore | Built on Trust",
+  description: "Discover 5,000+ verified properties in Bangalore with Nandi Dreamland. Browse apartments, villas, plots & new projects from top builders. Expert guidance for buying, selling & renting. RERA registered.",
   alternates: {
     canonical: "https://www.dreamland.com",
   },
   openGraph: {
-    title: "Dreamland — Buy, Sell & Rent Verified Properties in Bangalore",
+    title: "Nandi Dreamland — Buy, Sell & Rent Verified Properties in Bangalore",
     description: "Discover 5,000+ verified properties in Bangalore. Browse apartments, villas, plots & new projects from top builders.",
     url: "https://www.dreamland.com",
     type: "website",

@@ -34,7 +34,7 @@ export async function generateMetadata({ params }) {
   const data = await getBlogData(params.slug);
 
   if (!data) {
-    return { title: 'Blog Post Not Found | Dreamland' };
+    return { title: 'Blog Post Not Found | Nandi Dreamland' };
   }
 
   const { blog } = data;
@@ -54,9 +54,9 @@ export async function generateMetadata({ params }) {
       description,
       url,
       type: 'article',
-      siteName: 'Dreamland',
+      siteName: 'Nandi Dreamland',
       publishedTime: blog.publishedAt,
-      authors: [blog.author?.name || 'Dreamland Team'],
+      authors: [blog.author?.name || 'Nandi Dreamland Team'],
       ...(image && { images: [{ url: image, width: 1200, height: 630, alt: title }] }),
     },
     twitter: {

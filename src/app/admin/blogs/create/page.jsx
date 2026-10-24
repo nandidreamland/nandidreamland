@@ -388,7 +388,7 @@ export default function CreateBlogPage() {
               </span>
               <p className="text-xs text-emerald-700 font-medium">https://dreamland.com › blog › {formData.title ? encodeURIComponent(formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 30)) : 'article'}</p>
               <h4 className="text-base font-bold text-blue-800 hover:underline cursor-pointer line-clamp-1">
-                {formData.seo.metaTitle || formData.title || 'Page Title Appears Here'} | Dreamland
+                {formData.seo.metaTitle || formData.title || 'Page Title Appears Here'} | Nandi Dreamland
               </h4>
               <p className="text-xs text-slate-600 line-clamp-2 mt-0.5">
                 {formData.seo.metaDescription || formData.excerpt || 'Add an optimized meta description to influence click-through rates on search engines...'}

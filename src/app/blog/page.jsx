@@ -26,13 +26,13 @@ async function getInitialBlogs() {
 }
 
 export const metadata = {
-  title: "Real Estate Blog — Property Tips, Market Trends & Investment Guide | Dreamland",
-  description: "Expert real estate insights from Dreamland. Read property investment tips, Bangalore market trends, home buying guides, and legal advice for buyers and sellers.",
+  title: "Real Estate Blog — Property Tips, Market Trends & Investment Guide | Nandi Dreamland",
+  description: "Expert real estate insights from Nandi Dreamland. Read property investment tips, Bangalore market trends, home buying guides, and legal advice for buyers and sellers.",
   alternates: {
     canonical: "https://www.dreamland.com/blog",
   },
   openGraph: {
-    title: "Real Estate Blog — Property Tips & Market Trends | Dreamland",
+    title: "Real Estate Blog — Property Tips & Market Trends | Nandi Dreamland",
     description: "Expert insights on Bangalore real estate — investment tips, market trends, home buying guides.",
     url: "https://www.dreamland.com/blog",
     type: "website",

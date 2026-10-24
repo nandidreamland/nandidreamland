@@ -1,11 +1,25 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import Navber from '../components/Navber';
 import Footer from '../components/Footer';
+import { usePropertyStore } from '@/stores';
+
+const DEFAULT_ABOUT_IMAGE = "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&h=600&fit=crop&crop=center";
+const DEFAULT_ABOUT_TITLE = "About *Nandi Dreamland*";
+const DEFAULT_ABOUT_SUBTITLE = "Your trusted partner in real estate excellence, connecting dreams with reality since our inception.";
 
 export default function AboutContent() {
+    const heroImage = usePropertyStore((state) => state.heroImage);
+    const fetchHeroImage = usePropertyStore((state) => state.fetchHeroImage);
+
+    useEffect(() => {
+        fetchHeroImage();
+    }, [fetchHeroImage]);
+
+    const aboutTitle = heroImage?.aboutTitle || DEFAULT_ABOUT_TITLE;
+
     return (
         <>
             <main className="min-h-screen bg-white">
@@ -14,17 +28,18 @@ export default function AboutContent() {
                     <div className="absolute inset-0">
                         <div className="absolute inset-0 bg-black/20"></div>
                         <img
-                            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&h=600&fit=crop&crop=center"
+                            src={heroImage?.aboutImage || DEFAULT_ABOUT_IMAGE}
                             alt="Modern office building"
                             className="w-full h-full object-cover"
                         />
                     </div>
                     <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                         <h1 className="text-4xl md:text-6xl font-bold mb-6">
-                            About <span className="text-yellow-300">Dreamland</span>
+                            {/* text wrapped in *asterisks* renders in the yellow accent */}
+                            {aboutTitle.split('*').map((part, i) => i % 2 ? <span key={i} className="text-yellow-300">{part}</span> : part)}
                         </h1>
                         <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-                            Your trusted partner in real estate excellence, connecting dreams with reality since our inception.
+                            {heroImage?.aboutSubtitle || DEFAULT_ABOUT_SUBTITLE}
                         </p>
                     </div>
                 </section>
@@ -38,7 +53,7 @@ export default function AboutContent() {
                                     Our Story
                                 </h2>
                                 <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                                    Founded with a vision to revolutionize the real estate experience in India, Dreamland has grown from a small team of passionate professionals to one of the most trusted names in the industry.
+                                    Founded with a vision to revolutionize the real estate experience in India, Nandi Dreamland has grown from a small team of passionate professionals to one of the most trusted names in the industry.
                                 </p>
                                 <p className="text-lg text-gray-700 mb-6 leading-relaxed">
                                     We understand that buying or selling a property is one of life's most significant decisions. That's why we've built our entire business around trust, transparency, and delivering exceptional results for our clients.
@@ -216,7 +231,7 @@ export default function AboutContent() {
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg> TBD City
                                 </p>
                                 <p className="text-gray-700 text-sm">
-                                    Leading the vision and strategy for Dreamland's continued growth.
+                                    Leading the vision and strategy for Nandi Dreamland's continued growth.
                                 </p>
                             </div>
 
@@ -242,7 +257,7 @@ export default function AboutContent() {
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center mb-12">
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                                Why Choose Dreamland?
+                                Why Choose Nandi Dreamland?
                             </h2>
                             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                                 Experience the difference that sets us apart from the competition

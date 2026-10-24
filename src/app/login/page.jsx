@@ -114,7 +114,7 @@ export default function Login() {
               <div className="inline-flex items-center justify-center p-2 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md shadow-inner mb-2">
                 <Image
                   src="/dreamlandlogo.jpeg"
-                  alt="Dreamland Logo"
+                  alt="Nandi Dreamland Logo"
                   width={110}
                   height={38}
                   className="rounded-lg object-contain"
@@ -268,7 +268,7 @@ export default function Login() {
 
       {/* Footer Info */}
       <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 text-center text-xs text-slate-500">
-        &copy; {new Date().getFullYear()} Dreamland Tech Pvt Ltd. All rights reserved. Enterprise Real Estate Intelligence.
+        &copy; {new Date().getFullYear()} Nandi Dreamland Tech Pvt Ltd. All rights reserved. Enterprise Real Estate Intelligence.
       </div>
     </div>
   );

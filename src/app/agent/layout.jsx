@@ -302,7 +302,7 @@ export default function AgentLayout({ children }) {
       <footer className="bg-white border-t border-slate-200/80 py-4 px-6 text-center text-xs text-slate-600 flex flex-col sm:flex-row items-center justify-between max-w-7xl mx-auto w-full">
         <div className="flex items-center space-x-2">
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>Dreamland Internal CRM • Protected Executive Session</span>
+          <span>Nandi Dreamland Internal CRM • Protected Executive Session</span>
         </div>
         <div className="mt-2 sm:mt-0 font-medium">
           Authorized Real Estate Advisor Environment

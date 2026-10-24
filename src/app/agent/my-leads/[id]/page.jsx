@@ -619,7 +619,7 @@ export default function LeadDetailPage() {
                   <span>Call</span>
                 </a>
                 <a
-                  href={`https://wa.me/91${cleanPhone(lead.phone)}?text=Hello%20${encodeURIComponent(lead.name)},%20this%20is%20regarding%20your%20property%20inquiry%20with%20Dreamland.`}
+                  href={`https://wa.me/91${cleanPhone(lead.phone)}?text=Hello%20${encodeURIComponent(lead.name)},%20this%20is%20regarding%20your%20property%20inquiry%20with%20Nandi Dreamland.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-bold transition-colors"
@@ -629,7 +629,7 @@ export default function LeadDetailPage() {
                 </a>
                 {lead.email ? (
                   <a
-                    href={`mailto:${lead.email}?subject=Property Inquiry - Dreamland`}
+                    href={`mailto:${lead.email}?subject=Property Inquiry - Nandi Dreamland`}
                     className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-800 text-xs font-bold transition-colors"
                   >
                     <Mail className="w-4 h-4 mb-1 text-blue-600" />
