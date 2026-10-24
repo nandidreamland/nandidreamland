@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { uploadImage } from '@/lib/uploadImage';
 import {
   FileText,
   Sparkles,
@@ -70,34 +71,18 @@ export default function CreateBlogPage() {
     if (!file) return;
 
     setImageUploading(true);
-    const uploadFormData = new FormData();
-    uploadFormData.append('image', file);
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/upload/blog-image', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: uploadFormData,
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setFormData((prev) => ({
-          ...prev,
-          featuredImage: data.data.url,
-        }));
-      } else {
-        alert('Failed to upload image: ' + data.message);
-      }
+      const { url } = await uploadImage(file);
+      setFormData((prev) => ({
+        ...prev,
+        featuredImage: url,
+      }));
     } catch (error) {
-      alert('Failed to upload image');
-      console.error('Error uploading image:', error);
+      alert(error.message);
     } finally {
       setImageUploading(false);
+      e.target.value = '';
     }
   };
 

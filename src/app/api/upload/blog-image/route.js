@@ -1,7 +1,4 @@
 import { NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
 
 // Helper function to verify admin token
@@ -9,17 +6,17 @@ async function verifyAdminToken(request) {
   try {
     const token = request.headers.get('authorization')?.replace('Bearer ', '');
     if (!token) {
-      return { isValid: false, error: 'No token provided' };
+      return { isValid: false, error: 'Your session has expired. Please log in again.' };
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (decoded.role !== 'admin') {
-      return { isValid: false, error: 'Admin access required' };
+      return { isValid: false, error: 'Only admins can upload images.' };
     }
 
     return { isValid: true, userId: decoded.id };
   } catch (error) {
-    return { isValid: false, error: 'Invalid token' };
+    return { isValid: false, error: 'Your session has expired. Please log in again.' };
   }
 }
 
@@ -38,9 +35,16 @@ export async function POST(request) {
     const formData = await request.formData();
     const file = formData.get('image');
 
-    if (!file) {
+    if (!file || typeof file === 'string') {
       return NextResponse.json(
-        { success: false, message: 'No image file provided' },
+        { success: false, message: 'Please choose an image file to upload.' },
+        { status: 400 }
+      );
+    }
+
+    if (file.size === 0) {
+      return NextResponse.json(
+        { success: false, message: 'That file is empty. Please pick a different image.' },
         { status: 400 }
       );
     }
@@ -49,7 +53,7 @@ export async function POST(request) {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
-        { success: false, message: 'Invalid file type. Only JPEG, PNG, and WebP are allowed.' },
+        { success: false, message: 'This file type is not supported. Please upload a JPG, PNG or WebP image.' },
         { status: 400 }
       );
     }
@@ -58,53 +62,62 @@ export async function POST(request) {
     const maxSize = 5 * 1024 * 1024; // 5MB in bytes
     if (file.size > maxSize) {
       return NextResponse.json(
-        { success: false, message: 'File size too large. Maximum 5MB allowed.' },
+        {
+          success: false,
+          message: `This image is ${(file.size / 1024 / 1024).toFixed(1)}MB. Please upload an image under 5MB.`,
+        },
         { status: 400 }
       );
     }
 
-    // Generate unique filename
-    const fileExtension = path.extname(file.name);
-    const uniqueId = uuidv4();
-    const fileName = `blog-${Date.now()}-${uniqueId}${fileExtension}`;
-    
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'blog-images');
-    
-    try {
-      const fs = require('fs');
-      if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
-      }
-    } catch (error) {
-      console.error('Error creating upload directory:', error);
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_UPLOAD_PRESET) {
+      console.error('Cloudinary env vars missing');
+      return NextResponse.json(
+        { success: false, message: 'Image storage is not set up on the server. Please contact your developer.' },
+        { status: 500 }
+      );
     }
 
-    // Write file
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const filePath = path.join(uploadsDir, fileName);
-    
-    await writeFile(filePath, buffer);
-    
-    // Return the public URL
-    const imageUrl = `/uploads/blog-images/${fileName}`;
-    
+    // Upload to Cloudinary (the server filesystem is read-only on Vercel)
+    const cloudinaryForm = new FormData();
+    cloudinaryForm.append('file', file);
+    cloudinaryForm.append('upload_preset', process.env.CLOUDINARY_UPLOAD_PRESET);
+
+    const cloudinaryResponse = await fetch(
+      `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`,
+      { method: 'POST', body: cloudinaryForm }
+    );
+    const cloudinaryData = await cloudinaryResponse.json();
+
+    if (!cloudinaryResponse.ok) {
+      console.error('Cloudinary upload failed:', cloudinaryData);
+      return NextResponse.json(
+        {
+          success: false,
+          message: `The image could not be saved (${cloudinaryData.error?.message || 'image service error'}). Please try again or use a different image.`,
+        },
+        { status: 502 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Image uploaded successfully',
       data: {
-        url: imageUrl,
-        fileName,
-        size: file.size,
-        type: file.type
-      }
+        url: cloudinaryData.secure_url,
+        fileName: cloudinaryData.public_id,
+        size: cloudinaryData.bytes,
+        type: file.type,
+      },
     });
 
   } catch (error) {
     console.error('Error uploading image:', error);
     return NextResponse.json(
-      { success: false, message: 'Failed to upload image' },
+      {
+        success: false,
+        message: 'Something went wrong while uploading. Please check your internet connection and try again.',
+      },
       { status: 500 }
     );
   }

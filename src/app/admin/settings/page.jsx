@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePropertyStore } from '@/stores';
+import { uploadImage } from '@/lib/uploadImage';
 import {
   Settings,
   Building2,
@@ -159,27 +160,16 @@ export default function AdminSettings() {
     if (!file) return;
 
     setHeroImageUploading(true);
-    const uploadFormData = new FormData();
-    uploadFormData.append('image', file);
+    setHeroError('');
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/upload/blog-image', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: uploadFormData,
-      });
-      const data = await response.json();
-      if (data.success) {
-        setHeroForm((prev) => ({ ...prev, [field]: data.data.url }));
-      } else {
-        setHeroError(data.message || 'Failed to upload image');
-      }
+      const { url } = await uploadImage(file);
+      setHeroForm((prev) => ({ ...prev, [field]: url }));
     } catch (error) {
-      setHeroError('Failed to upload image');
-      console.error('Error uploading hero image:', error);
+      setHeroError(error.message);
     } finally {
       setHeroImageUploading(false);
+      e.target.value = '';
     }
   };
 
@@ -236,27 +226,16 @@ export default function AdminSettings() {
     if (!file) return;
 
     setSlideImageUploading(true);
-    const uploadFormData = new FormData();
-    uploadFormData.append('image', file);
+    setSlideError('');
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/upload/blog-image', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: uploadFormData,
-      });
-      const data = await response.json();
-      if (data.success) {
-        setSlideForm((prev) => ({ ...prev, image: data.data.url }));
-      } else {
-        setSlideError(data.message || 'Failed to upload image');
-      }
+      const { url } = await uploadImage(file);
+      setSlideForm((prev) => ({ ...prev, image: url }));
     } catch (error) {
-      setSlideError('Failed to upload image');
-      console.error('Error uploading slide image:', error);
+      setSlideError(error.message);
     } finally {
       setSlideImageUploading(false);
+      e.target.value = '';
     }
   };
 
