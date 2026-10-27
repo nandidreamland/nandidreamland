@@ -3,6 +3,9 @@ import Property from '@/models/Property';
 import Blog from '@/models/Blog';
 import { generateSlug } from '@/utils/slugify';
 
+// Rebuild the sitemap at most once an hour
+export const revalidate = 3600;
+
 export default async function sitemap() {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.dreamland.com';
 

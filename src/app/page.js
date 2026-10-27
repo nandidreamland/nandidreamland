@@ -2,6 +2,9 @@ import { connectDB } from '@/lib/db';
 import Property from '@/models/Property';
 import HomeComponent from "./components/Home";
 
+// Always read fresh properties from the DB instead of a copy saved at build time
+export const dynamic = 'force-dynamic';
+
 async function getInitialProperties() {
   try {
     await connectDB();

@@ -1,3 +1,6 @@
+// Always read fresh data from the DB instead of a copy saved at build time
+export const dynamic = 'force-dynamic';
+
 import { connectDB } from '@/lib/db';
 import Blog from '@/models/Blog';
 import BlogListingContent from './BlogListingContent';
