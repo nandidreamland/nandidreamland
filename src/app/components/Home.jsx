@@ -122,6 +122,48 @@ export default function Home({ initialProperties = null }) {
         }
     };
 
+    // "Get a call back" band near the bottom of the page: phone number only
+    const [callbackPhone, setCallbackPhone] = useState('');
+    const [callbackStatus, setCallbackStatus] = useState('idle'); // idle | sending | done
+    const [callbackError, setCallbackError] = useState('');
+
+    const handleCallbackSubmit = async (e) => {
+        e.preventDefault();
+        const phone = callbackPhone.replace(/[\s-]/g, '');
+        if (!/^(\+91)?[6-9]\d{9}$/.test(phone)) {
+            setCallbackError('Please enter a valid 10-digit phone number.');
+            return;
+        }
+        setCallbackError('');
+        setCallbackStatus('sending');
+        try {
+            const response = await fetch('/api/leads', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                // The API needs a name and location, so use placeholders the team can edit in the CRM
+                body: JSON.stringify({
+                    name: 'Callback Request',
+                    phone,
+                    interestedLocation: 'Not specified',
+                    source: 'homepage_callback',
+                }),
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to submit');
+            }
+            localStorage.setItem('leadSubmitted', 'true');
+            setHasSubmittedLead(true);
+            setCallbackStatus('done');
+            setCallbackPhone('');
+            useCRMStore.getState().invalidateLeadsCache();
+            useDashboardStore.getState().invalidateDashboard();
+        } catch (error) {
+            setCallbackStatus('idle');
+            setCallbackError(error.message || 'Something went wrong. Please try again.');
+        }
+    };
+
     const handleCloseModal = () => {
         setShowLeadModal(false);
     };
@@ -549,29 +591,47 @@ export default function Home({ initialProperties = null }) {
                                 </p>
                             </div>
                             <div className="w-full lg:w-auto">
-                                <form
-                                    action="/lead"
-                                    className="flex flex-col sm:flex-row gap-3"
-                                >
-                                    <label htmlFor="phone-band" className="sr-only">Phone</label>
-                                    <input
-                                        id="phone-band"
-                                        name="phone"
-                                        type="tel"
-                                        placeholder="Your phone number"
-                                        className="h-14 w-full sm:w-72 px-5 rounded-xl bg-[#F7F4EC] text-[#15241D] placeholder-[#15241D]/40 focus:ring-2 focus:ring-[#F7F4EC]/40 outline-none"
-                                        required
-                                    />
-                                    <button
-                                        type="submit"
-                                        className="h-14 px-7 rounded-xl bg-[#F7F4EC] text-[#123B29] font-semibold hover:bg-white transition-colors cursor-pointer"
-                                    >
-                                        Get a call back
-                                    </button>
-                                </form>
-                                <p className="mt-3 text-center lg:text-left text-xs text-[#F7F4EC]/50">
-                                    We&apos;ll only call about properties — no spam.
-                                </p>
+                                {callbackStatus === 'done' ? (
+                                    <div className="rounded-xl bg-[#F7F4EC] px-6 py-5 text-center lg:text-left sm:w-[28rem]" role="status">
+                                        <p className="text-lg font-semibold text-[#123B29]">Thank you! We will call you soon.</p>
+                                        <p className="mt-1 text-sm text-[#15241D]/70">One of our advisors will reach out to you shortly.</p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <form
+                                            onSubmit={handleCallbackSubmit}
+                                            className="flex flex-col sm:flex-row gap-3"
+                                        >
+                                            <label htmlFor="phone-band" className="sr-only">Phone</label>
+                                            <input
+                                                id="phone-band"
+                                                name="phone"
+                                                type="tel"
+                                                inputMode="numeric"
+                                                value={callbackPhone}
+                                                onChange={(e) => setCallbackPhone(e.target.value)}
+                                                placeholder="Your phone number"
+                                                className="h-14 w-full sm:w-72 px-5 rounded-xl bg-[#F7F4EC] text-[#15241D] placeholder-[#15241D]/40 focus:ring-2 focus:ring-[#F7F4EC]/40 outline-none"
+                                                required
+                                            />
+                                            <button
+                                                type="submit"
+                                                disabled={callbackStatus === 'sending'}
+                                                className="h-14 px-7 rounded-xl bg-[#F7F4EC] text-[#123B29] font-semibold hover:bg-white transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                                            >
+                                                {callbackStatus === 'sending' ? 'Sending...' : 'Get a call back'}
+                                            </button>
+                                        </form>
+                                        {callbackError && (
+                                            <p className="mt-3 text-center lg:text-left text-sm text-red-300" role="alert">
+                                                {callbackError}
+                                            </p>
+                                        )}
+                                        <p className="mt-3 text-center lg:text-left text-xs text-[#F7F4EC]/50">
+                                            We&apos;ll only call about properties — no spam.
+                                        </p>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -587,6 +647,7 @@ export default function Home({ initialProperties = null }) {
                 onClose={handleCloseModal}
                 onSubmit={handleLeadSubmit}
                 title="Welcome! Get Exclusive Property Access"
+                locations={storeHeroImage?.leadLocations || []}
             />
 
             {/* Lead Submit Success Modal */}

@@ -23,8 +23,8 @@ const Footer = () => {
                             <div className="font-semibold mb-2">Company</div>
                             <ul className="space-y-1 text-gray-600">
                                 <li><Link href="/about" className="hover:text-indigo-600">About</Link></li>
-                                <li><Link href="/careers" className="hover:text-indigo-600">Careers</Link></li>
-                                <li><Link href="/contact" className="hover:text-indigo-600">Contact</Link></li>
+                                {/* Contact hidden for now; uncomment to bring it back */}
+                                {/* <li><Link href="/contact" className="hover:text-indigo-600">Contact</Link></li> */}
                             </ul>
                         </div>
                         <div>

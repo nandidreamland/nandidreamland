@@ -50,6 +50,12 @@ const heroImageSchema = new mongoose.Schema({
       "Noida Sector 150",
       "Velachery, Chennai"
     ]
+  },
+  // Options for the "Preferred Location" dropdown in the lead capture popup.
+  // Empty means the popup falls back to the built-in list in utils/locations.js.
+  leadLocations: {
+    type: [String],
+    default: []
   }
 }, {
   timestamps: true

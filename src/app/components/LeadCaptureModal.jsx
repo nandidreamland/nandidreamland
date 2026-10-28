@@ -2,8 +2,20 @@
 
 import { useState } from 'react';
 import { getAllLocations } from '@/utils/locations';
+import { usePropertyStore } from '@/stores';
+import { splitLocations } from '@/utils/splitLocations';
 
-export default function LeadCaptureModal({ isOpen, onClose, onSubmit, title = "Get Exclusive Property Access", description = "Join 5,000+ happy families who found their dream home with us.", propertyLocation = '' }) {
+export default function LeadCaptureModal({ isOpen, onClose, onSubmit, title = "Get Exclusive Property Access", description = "Join 5,000+ happy families who found their dream home with us.", propertyLocation = '', locations = [] }) {
+  const storeLeadLocations = usePropertyStore((state) => state.heroImage?.leadLocations);
+  // Admin-managed list from settings; fall back to store list or built-in list if none saved.
+  // splitLocations breaks "A, B, C" into separate options even if it was saved as one string.
+  const propLocations = splitLocations(locations);
+  const savedLocations = splitLocations(storeLeadLocations || []);
+  const locationOptions = propLocations.length > 0
+    ? propLocations
+    : savedLocations.length > 0
+      ? savedLocations
+      : getAllLocations();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -186,7 +198,7 @@ export default function LeadCaptureModal({ isOpen, onClose, onSubmit, title = "G
                     className="w-full rounded-xl border border-gray-200 bg-gray-50 bg-white px-4 py-2.5 text-gray-900 outline-none transition-all focus:border-[#1F6B4C] focus:bg-white focus:ring-4 focus:ring-[#1F6B4C]/10"
                   >
                     <option value="">Select where you want to buy</option>
-                    {getAllLocations().map(location => (
+                    {locationOptions.map(location => (
                       <option key={location} value={location}>
                         {location}
                       </option>

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import HeroImage from '@/models/HeroImage';
 import jwt from 'jsonwebtoken';
+import { splitLocations } from '@/utils/splitLocations';
 
 const DEFAULT_HERO_IMAGE = {
   image: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=900&h=1125&fit=crop&crop=center',
@@ -19,7 +20,8 @@ const DEFAULT_HERO_IMAGE = {
     "Gachibowli, Hyderabad",
     "Noida Sector 150",
     "Velachery, Chennai"
-  ]
+  ],
+  leadLocations: []
 };
 
 // Helper function to verify admin token
@@ -76,7 +78,7 @@ export async function PUT(request) {
     }
 
     const data = await request.json();
-    const { image, alt, statLabel, statValue, topCities, popularLocalities, aboutImage, aboutTitle, aboutSubtitle } = data;
+    const { image, alt, statLabel, statValue, topCities, popularLocalities, leadLocations, aboutImage, aboutTitle, aboutSubtitle } = data;
 
     if (!image) {
       return NextResponse.json(
@@ -87,7 +89,7 @@ export async function PUT(request) {
 
     const heroImage = await HeroImage.findOneAndUpdate(
       {},
-      { $set: { image, alt, statLabel, statValue, topCities, popularLocalities, aboutImage, aboutTitle, aboutSubtitle } },
+      { $set: { image, alt, statLabel, statValue, topCities, popularLocalities, leadLocations: splitLocations(leadLocations || []), aboutImage, aboutTitle, aboutSubtitle } },
       { new: true, upsert: true, runValidators: true }
     );
 

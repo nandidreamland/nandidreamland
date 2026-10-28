@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePropertyStore } from '@/stores';
 import { uploadImage } from '@/lib/uploadImage';
+import { getAllLocations } from '@/utils/locations';
+import { splitLocations } from '@/utils/splitLocations';
 import {
   Settings,
   Building2,
@@ -54,7 +56,7 @@ export default function AdminSettings() {
   const [heroImageLoaded, setHeroImageLoaded] = useState(false);
   const [heroForm, setHeroForm] = useState({
     image: '', alt: '', statLabel: '', statValue: '',
-    topCitiesText: '', popularLocalitiesText: '',
+    topCitiesText: '', popularLocalitiesText: '', leadLocationsText: '',
     aboutImage: '', aboutTitle: '', aboutSubtitle: ''
   });
   const [heroImageUploading, setHeroImageUploading] = useState(false);
@@ -136,6 +138,8 @@ export default function AdminSettings() {
           statValue: data.data.statValue || '',
           topCitiesText: (data.data.topCities || []).join(', '),
           popularLocalitiesText: (data.data.popularLocalities || []).join(', '),
+          // Start from the built-in list until admin saves their own
+          leadLocationsText: (splitLocations(data.data.leadLocations || []).length ? splitLocations(data.data.leadLocations) : getAllLocations()).join(', '),
           aboutImage: data.data.aboutImage || '',
           aboutTitle: data.data.aboutTitle || '',
           aboutSubtitle: data.data.aboutSubtitle || '',
@@ -194,6 +198,7 @@ export default function AdminSettings() {
         statValue: heroForm.statValue,
         topCities: heroForm.topCitiesText.split(',').map((c) => c.trim()).filter((c) => c),
         popularLocalities: heroForm.popularLocalitiesText.split(',').map((l) => l.trim()).filter((l) => l),
+        leadLocations: splitLocations(heroForm.leadLocationsText),
         aboutImage: heroForm.aboutImage,
         aboutTitle: heroForm.aboutTitle,
         aboutSubtitle: heroForm.aboutSubtitle,
@@ -209,6 +214,9 @@ export default function AdminSettings() {
       const data = await response.json();
 
       if (data.success) {
+        if (data.data) {
+          usePropertyStore.setState({ heroImage: data.data, heroImageLastFetched: Date.now() });
+        }
         usePropertyStore.getState().invalidateHeroImage();
         setHeroSaved(true);
         setTimeout(() => setHeroSaved(false), 3000);
@@ -1011,6 +1019,31 @@ export default function AdminSettings() {
                 value={heroForm.popularLocalitiesText}
                 onChange={(e) => setHeroForm((prev) => ({ ...prev, popularLocalitiesText: e.target.value }))}
                 placeholder="Whitefield, Bengaluru, Baner, Pune, Andheri, Mumbai"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-900 text-xs outline-none focus:border-[#1F6B4C] focus:bg-white"
+              />
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-[11px] font-bold text-slate-600 uppercase">
+                  Lead Form Locations (Comma Separated)
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setHeroForm((prev) => ({ ...prev, leadLocationsText: getAllLocations().join(', ') }))}
+                  className="text-[11px] font-semibold text-[#1F6B4C] hover:underline cursor-pointer"
+                >
+                  Reset to default locations
+                </button>
+              </div>
+              <p className="text-xs text-slate-500 mb-2">
+                Options in the &quot;Preferred Location&quot; dropdown of the welcome popup on the home page.
+              </p>
+              <textarea
+                rows={3}
+                value={heroForm.leadLocationsText}
+                onChange={(e) => setHeroForm((prev) => ({ ...prev, leadLocationsText: e.target.value }))}
+                placeholder="Whitefield, Sarjapura, Electronic City, HSR Layout"
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-900 text-xs outline-none focus:border-[#1F6B4C] focus:bg-white"
               />
             </div>
